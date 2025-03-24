@@ -6,6 +6,12 @@ interface Allocation {
   amount: string; // amount in wei format
 }
 
+interface ResponseValue {
+  value: string[];
+  treeIndex: number;
+  proof: string[];
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -50,13 +56,14 @@ export async function POST(request: Request) {
       root: merkleTree.root,
       format: "standard-v1",
       tree: merkleTree.dump(),
-      values: []
+      values: [] as ResponseValue[]
     };
     
-    // Add proofs for each value
-    for (const [i, v] of merkleTree.entries()) {
+    // Add proofs for each value - revert to original approach but with explicit indexing
+    // Use traditional for-loop instead of for...of to avoid TypeScript issues
+    for (let i = 0; i < values.length; i++) {
       response.values.push({
-        value: v,
+        value: values[i],
         treeIndex: i,
         proof: merkleTree.getProof(i)
       });

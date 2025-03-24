@@ -102,9 +102,11 @@ export const generateMerkleTree = (allocations: Allocation[]) => {
 export const formatMerkleTreeOutput = (merkleTree: StandardMerkleTree<any[]>) => {
   const values: any[] = [];
   
-  for (const [i, v] of merkleTree.entries()) {
+  // Use traditional for loop instead of for...of to avoid TypeScript issues
+  const valuesArray = merkleTree.dump().values;
+  for (let i = 0; i < valuesArray.length; i++) {
     values.push({
-      value: v,
+      value: valuesArray[i].value,
       treeIndex: i,
       proof: merkleTree.getProof(i)
     });
